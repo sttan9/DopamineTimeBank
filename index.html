@@ -30,11 +30,12 @@
             }
         }
     </script>
+    
     <style>
         /* Custom glow systems & scrollbars */
-        .glow-green { box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
-        .glow-indigo { box-shadow: 0 0 25px rgba(99, 102, 241, 0.2); }
-        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.2); }
+        .glow-green { box-shadow: 0 0 25px rgba(16, 185, 129, 0.35); }
+        .glow-indigo { box-shadow: 0 0 25px rgba(99, 102, 241, 0.35); }
+        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.35); }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
         ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.5); border-radius: 9999px; }
@@ -88,18 +89,25 @@
                 </div>
                 <div>
                     <h1 class="text-sm md:text-lg font-bold tracking-tight">DOPAMINE BANK</h1>
-                    <p class="text-[9px] md:text-xs text-slate-500 font-semibold tracking-wider uppercase">Gamified Mind Control</p>
+                    <p class="text-[9px] md:text-xs text-slate-500 font-semibold tracking-wider uppercase">Local Persistence Safe</p>
                 </div>
             </div>
             
             <div class="flex items-center space-x-2 md:space-x-3">
+                <!-- Sync State Badge -->
+                <div id="storage-status-badge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[9px] md:text-xs text-emerald-400 font-semibold transition-all duration-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <i data-lucide="save" class="w-3 h-3"></i>
+                    <span class="hidden sm:inline">Offline Sync On</span>
+                </div>
+
                 <button id="btn-stats" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="View Daily History">
                     <i data-lucide="bar-chart-3" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </button>
                 <button id="btn-info" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="How This Works">
                     <i data-lucide="help-circle" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </button>
-                <button id="btn-settings" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="Quick Reset">
+                <button id="btn-settings" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="Reset Today">
                     <i data-lucide="rotate-ccw" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </button>
             </div>
@@ -109,40 +117,40 @@
     <!-- MAIN CONTENT APP WINDOW -->
     <main class="flex-grow flex flex-col items-center justify-center p-3 md:p-6 max-w-4xl w-full mx-auto space-y-4 md:space-y-6">
 
-        <!-- STATUS STATUS PILL & STATE OVERVIEW -->
+        <!-- STATUS STATUS PILL -->
         <div id="state-banner" class="w-full text-center py-1.5 px-4 rounded-full bg-slate-900/50 border border-slate-800 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-slate-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300">
             <span class="relative flex h-2 w-2">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-500" id="state-dot"></span>
             </span>
-            <span id="state-text">Ready to Accumulate</span>
+            <span id="state-text">Bank Paused</span>
         </div>
 
         <!-- MAIN CORE BALANCES & STATS CARDS -->
         <div class="grid grid-cols-3 gap-2 md:gap-4 w-full">
             
-            <!-- PRODUCTIVE TIME EARNED (Compact on Mobile) -->
+            <!-- PRODUCTIVE TIME EARNED -->
             <div class="bg-slate-900/40 border border-slate-900 rounded-xl md:rounded-2xl p-2.5 md:p-5 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-300 hover:border-slate-800">
                 <div class="absolute top-1.5 left-1.5 text-emerald-500/10 md:text-emerald-500/20"><i data-lucide="zap" class="w-6 h-6 md:w-12 md:h-12 stroke-[1.5]"></i></div>
                 <span class="text-[9px] md:text-xs font-bold text-emerald-500 tracking-wider md:tracking-widest uppercase mb-1 z-10">Work</span>
-                <span id="stat-work" class="font-mono text-sm sm:text-base md:text-3xl font-bold tracking-tight text-slate-100 my-1 md:my-2 z-10">00:00:00</span>
+                <span id="stat-work" class="font-mono text-xs sm:text-base md:text-3xl font-bold tracking-tight text-slate-100 my-1 md:my-2 z-10">00:00:00</span>
                 <p class="hidden sm:block text-[9px] md:text-[10px] text-slate-500 font-medium tracking-wide z-10">Accumulated Focus</p>
             </div>
 
-            <!-- RELAX BANK BALANCE (Compact on Mobile) -->
+            <!-- RELAX BANK BALANCE -->
             <div id="hero-balance-card" class="bg-gradient-to-b from-slate-900 to-slate-900/80 border-2 border-slate-800/80 rounded-xl md:rounded-2xl p-2.5 md:p-5 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-xl transition-all duration-500">
                 <span class="text-[9px] md:text-xs font-black text-indigo-400 tracking-wider md:tracking-widest uppercase mb-1 z-10">Balance</span>
-                <span id="stat-balance" class="font-mono text-base sm:text-2xl md:text-5xl font-black tracking-tight text-white my-1 md:my-2 z-10 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.2)]">00:00:00</span>
+                <span id="stat-balance" class="font-mono text-sm sm:text-2xl md:text-5xl font-black tracking-tight text-white my-1 md:my-2 z-10 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.2)]">00:00:00</span>
                 <p id="savings-rate-label" class="hidden sm:flex text-[9px] md:text-xs text-slate-400 font-medium tracking-wide z-10 items-center gap-1 bg-slate-950/60 py-0.5 px-2 rounded-full border border-slate-800">
-                    Earn: <span id="label-ratio" class="font-bold text-indigo-300">1.0x</span>
+                    Earn: <span id="label-ratio" class="font-bold text-indigo-300">0.5x</span>
                 </p>
             </div>
 
-            <!-- RELAX TIME SPENT (Compact on Mobile) -->
+            <!-- RELAX TIME SPENT -->
             <div class="bg-slate-900/40 border border-slate-900 rounded-xl md:rounded-2xl p-2.5 md:p-5 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all duration-300 hover:border-slate-800">
                 <div class="absolute top-1.5 right-1.5 text-indigo-500/10"><i data-lucide="coffee" class="w-6 h-6 md:w-12 md:h-12 stroke-[1.5]"></i></div>
                 <span class="text-[9px] md:text-xs font-bold text-indigo-400 tracking-wider md:tracking-widest uppercase mb-1 z-10">Spent</span>
-                <span id="stat-relax" class="font-mono text-sm sm:text-base md:text-3xl font-bold tracking-tight text-slate-100 my-1 md:my-2 z-10">00:00:00</span>
+                <span id="stat-relax" class="font-mono text-xs sm:text-base md:text-3xl font-bold tracking-tight text-slate-100 my-1 md:my-2 z-10">00:00:00</span>
                 <p class="hidden sm:block text-[9px] md:text-[10px] text-slate-500 font-medium tracking-wide z-10">Break Today</p>
             </div>
 
@@ -159,7 +167,7 @@
                 <div class="flex flex-col space-y-2 md:space-y-4">
                     <div class="flex justify-between items-center px-1">
                         <span class="flex items-center space-x-2 text-xs md:text-sm font-bold text-emerald-400 tracking-wide">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span>Productive Modes</span>
                         </span>
                         <span class="text-[10px] text-slate-500 font-semibold uppercase">Earn Currency</span>
@@ -168,10 +176,10 @@
                     <!-- GIANT ACTION BUTTON: START PRODUCTIVE -->
                     <button id="btn-start-work" class="group relative overflow-hidden bg-slate-900 border border-slate-800 hover:border-emerald-500/40 hover:bg-slate-900/80 text-white rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform active:scale-[0.97] cursor-pointer shadow-lg hover:shadow-emerald-500/5 min-h-[120px] md:min-h-[170px]">
                         <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/0 to-emerald-500/0 group-hover:from-emerald-500/5 group-hover:to-transparent transition-all duration-300"></div>
-                        <div class="bg-emerald-500/10 text-emerald-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-300 mb-2 md:mb-3">
+                        <div id="icon-container-work" class="bg-emerald-500/10 text-emerald-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-300 mb-2 md:mb-3">
                             <i data-lucide="play" id="icon-work-btn" class="w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-emerald-400"></i>
                         </div>
-                        <span class="text-base md:text-xl font-extrabold tracking-wide uppercase group-hover:text-emerald-300 transition-colors">Start Productive Time</span>
+                        <span id="text-work-btn" class="text-base md:text-xl font-extrabold tracking-wide uppercase group-hover:text-emerald-300 transition-colors">Start Productive Time</span>
                         <span class="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1">Study, Work, Exercise, Create</span>
                     </button>
                 </div>
@@ -189,10 +197,10 @@
                     <!-- GIANT ACTION BUTTON: START RELAXING -->
                     <button id="btn-start-relax" class="group relative overflow-hidden bg-slate-900 border border-slate-800 hover:border-indigo-500/40 hover:bg-slate-900/80 text-white rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform active:scale-[0.97] cursor-pointer shadow-lg hover:shadow-indigo-500/5 disabled:opacity-30 disabled:cursor-not-allowed disabled:pointer-events-none min-h-[120px] md:min-h-[170px]">
                         <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/0 to-indigo-500/0 group-hover:from-indigo-500/5 group-hover:to-transparent transition-all duration-300"></div>
-                        <div class="bg-indigo-500/10 text-indigo-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-300 mb-2 md:mb-3">
+                        <div id="icon-container-relax" class="bg-indigo-500/10 text-indigo-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-300 mb-2 md:mb-3">
                             <i data-lucide="coffee" id="icon-relax-btn" class="w-6 h-6 md:w-10 md:h-10 stroke-[2.5]"></i>
                         </div>
-                        <span class="text-base md:text-xl font-extrabold tracking-wide uppercase group-hover:text-indigo-300 transition-colors">Start Break / Spend</span>
+                        <span id="text-relax-btn" class="text-base md:text-xl font-extrabold tracking-wide uppercase group-hover:text-indigo-300 transition-colors">Start Break / Spend</span>
                         <span class="text-[10px] md:text-xs text-slate-500 mt-0.5 md:mt-1">Videos, Socials, Games, Rest</span>
                     </button>
                 </div>
@@ -201,8 +209,8 @@
 
             <!-- CENTER BLOCKING / PAUSE BUTTON FOR TIMERS -->
             <div id="global-pause-container" class="hidden mt-4 pt-4 md:mt-6 md:pt-6 border-t border-slate-900">
-                <button id="btn-pause-global" class="w-full bg-gradient-to-r from-rose-500 to-amber-500 text-slate-950 hover:from-rose-400 hover:to-amber-400 py-3.5 md:py-5 rounded-xl md:rounded-2xl font-extrabold text-base md:text-lg uppercase tracking-wider transition-all duration-300 transform active:scale-[0.99] shadow-xl flex items-center justify-center gap-3">
-                    <i data-lucide="square" class="w-4 h-4 md:w-5 md:h-5 fill-slate-950"></i>
+                <button id="btn-pause-global" class="w-full bg-gradient-to-r from-rose-500 to-amber-500 text-slate-950 hover:from-rose-400 hover:to-amber-400 py-3.5 md:py-5 rounded-xl md:rounded-2xl font-extrabold text-sm md:text-lg uppercase tracking-wider transition-all duration-300 transform active:scale-[0.99] shadow-xl flex items-center justify-center gap-3">
+                    <i data-lucide="pause-circle" class="w-4 h-4 md:w-5 md:h-5 fill-slate-950"></i>
                     <span>Pause Current Session</span>
                 </button>
             </div>
@@ -215,9 +223,9 @@
                 <div class="flex justify-between items-center">
                     <label for="ratio-slider" class="text-xs md:text-sm font-semibold text-slate-300 flex items-center gap-2">
                         <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
-                        Conversion Ratio: <span class="font-bold text-indigo-400">x to y</span>
+                        Conversion Ratio: <span id="label-ratio-val" class="font-bold text-indigo-400">1:0.5</span>
                     </label>
-                    <span class="text-[10px] md:text-xs text-slate-500" id="ratio-explanation">1 Work min = 0.5 Break mins (2:1 Ratio)</span>
+                    <span class="text-[10px] md:text-xs text-slate-500" id="ratio-explanation">1 Work min = 30s Break (2:1 Ratio)</span>
                 </div>
                 <input type="range" id="ratio-slider" min="0.1" max="2.0" step="0.1" value="0.5" class="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500 focus:outline-none">
             </div>
@@ -226,9 +234,9 @@
             <div class="flex flex-col space-y-1.5 w-full md:w-auto">
                 <span class="text-[10px] md:text-xs text-slate-500 font-semibold uppercase tracking-wider">Presets</span>
                 <div class="flex gap-2">
-                    <button class="ratio-preset-btn flex-1 md:flex-initial bg-slate-950 hover:bg-slate-900 border border-slate-800 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px]" data-val="0.2">Hardcore (5:1)</button>
-                    <button class="ratio-preset-btn flex-1 md:flex-initial bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px]" data-val="0.5">Balanced (2:1)</button>
-                    <button class="ratio-preset-btn flex-1 md:flex-initial bg-slate-950 hover:bg-slate-900 border border-slate-800 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px]" data-val="1.0">Fair (1:1)</button>
+                    <button class="ratio-preset-btn flex-1 md:flex-initial bg-slate-950 hover:bg-slate-900 border border-slate-800 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px] transition-colors" data-val="0.2">Hardcore (5:1)</button>
+                    <button class="ratio-preset-btn flex-1 md:flex-initial bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px] transition-colors" data-val="0.5">Balanced (2:1)</button>
+                    <button class="ratio-preset-btn flex-1 md:flex-initial bg-slate-950 hover:bg-slate-900 border border-slate-800 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px] transition-colors" data-val="1.0">Fair (1:1)</button>
                 </div>
             </div>
         </div>
@@ -240,15 +248,14 @@
         <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs text-slate-500 gap-3">
             <p>Objective: Gamify attention span & replace passive scrolling with earned activities.</p>
             <p class="flex items-center gap-1.5 font-semibold text-slate-400">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Local Storage Saved Securely
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Browser-Isolated Security
             </p>
         </div>
     </footer>
 
-    <!-- MODAL: DETAILED HOW TO / GUIDE (Mobile Bottom Sheet Friendly) -->
+    <!-- MODAL: DETAILED HOW TO / GUIDE -->
     <div id="modal-info" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4 hidden mobile-bottom-sheet">
         <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-6 max-w-lg w-full space-y-4 mobile-bottom-sheet-content">
-            <!-- Mobile Tactile Pull Handle -->
             <div class="w-12 h-1.5 bg-slate-800 rounded-full mx-auto mb-1 sm:hidden"></div>
             <div class="flex justify-between items-center">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
@@ -261,19 +268,15 @@
                 <ul class="space-y-2 list-none pl-1">
                     <li class="flex items-start gap-2">
                         <span class="text-emerald-400 mt-0.5">✔</span> 
-                        <span><strong>Earn Ratio (e.g. 1 to 0.5):</strong> 1 minute of hard work earns you 30 seconds of relaxation.</span>
+                        <span><strong>Earn Ratio:</strong> 1 minute of hard work earns you a configured fraction of relaxation (e.g. 30 seconds if set to 0.5).</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <span class="text-indigo-400 mt-0.5">✔</span> 
-                        <span><strong>Double Tracking:</strong> Accumulate balance when doing positive habits, then flip the trigger when you start scrolling or resting.</span>
+                        <span><strong>State Restoring Persistence:</strong> Close your browser anytime. The app logs start and end times to calculate missing time if you reboot.</span>
                     </li>
                     <li class="flex items-start gap-2">
                         <span class="text-rose-400 mt-0.5">✔</span> 
-                        <span><strong>Zero Out Action:</strong> If your break balance hits exactly zero, the app automatically triggers an audio alarm to tell you to stop.</span>
-                    </li>
-                    <li class="flex items-start gap-2">
-                        <span class="text-slate-400 mt-0.5">✔</span> 
-                        <span><strong>Daily Reset:</strong> Every single day, the tracker resets back to zero so you start fresh without carrying over massive balances.</span>
+                        <span><strong>Daily Auto-Reset:</strong> At midnight, today's timers automatically reset and get archived to your History Log.</span>
                     </li>
                 </ul>
             </div>
@@ -281,10 +284,9 @@
         </div>
     </div>
 
-    <!-- MODAL: RESET CONFIRMATION (Mobile Bottom Sheet Friendly) -->
+    <!-- MODAL: RESET CONFIRMATION -->
     <div id="modal-reset" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4 hidden mobile-bottom-sheet">
         <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-6 max-w-sm w-full space-y-4 text-center mobile-bottom-sheet-content">
-            <!-- Mobile Tactile Pull Handle -->
             <div class="w-12 h-1.5 bg-slate-800 rounded-full mx-auto mb-1 sm:hidden"></div>
             <div class="text-rose-500 mx-auto w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center mb-2">
                 <i data-lucide="alert-triangle" class="w-6 h-6"></i>
@@ -298,10 +300,22 @@
         </div>
     </div>
 
-    <!-- MODAL: HISTORY STATS & PREVIOUS LOGS (Mobile Bottom Sheet Friendly) -->
+    <!-- MODAL: TIME DEPLETED ALARM -->
+    <div id="modal-depleted" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-0 sm:p-4 hidden mobile-bottom-sheet">
+        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-6 max-w-md w-full space-y-4 text-center mobile-bottom-sheet-content glow-rose">
+            <div class="w-12 h-1.5 bg-slate-800 rounded-full mx-auto mb-1 sm:hidden"></div>
+            <div class="text-rose-500 mx-auto w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-2 animate-bounce">
+                <i data-lucide="bell" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-black text-rose-400 uppercase tracking-widest">Balance Drained!</h3>
+            <p id="depleted-modal-msg" class="text-sm text-slate-300 leading-relaxed">Your earned relaxation time has completely run out. It is time to step away from distractions and jump back into action.</p>
+            <button id="btn-close-depleted" class="w-full bg-gradient-to-r from-emerald-500 to-indigo-500 text-slate-950 font-black py-4 rounded-xl shadow-lg transition-all text-base uppercase tracking-wider">Get Back to Focus</button>
+        </div>
+    </div>
+
+    <!-- MODAL: HISTORY STATS & PREVIOUS LOGS -->
     <div id="modal-stats" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-0 sm:p-4 hidden mobile-bottom-sheet">
         <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-6 max-w-md w-full space-y-4 mobile-bottom-sheet-content">
-            <!-- Mobile Tactile Pull Handle -->
             <div class="w-12 h-1.5 bg-slate-800 rounded-full mx-auto mb-1 sm:hidden"></div>
             <div class="flex justify-between items-center">
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
@@ -311,7 +325,6 @@
             </div>
             
             <div id="history-container" class="space-y-2 max-h-[50vh] sm:max-h-60 overflow-y-auto pr-1">
-                <!-- Javascript populates daily values dynamically -->
                 <p class="text-xs text-slate-500 text-center py-6">No previous daily logs found. Start tracking to build logs!</p>
             </div>
 
@@ -319,497 +332,503 @@
         </div>
     </div>
 
-    <!-- AUDIO NOTIFICATION SYSTEM / AUDIO SYNTH CONTEXT -->
     <script>
-        // SYSTEM CONSTANTS AND STATE MANAGEMENT
-        const state = {
-            ratio: 0.5,                  // Current work-to-relax conversion ratio
-            productiveSeconds: 0,        // Total accumulated study seconds
-            relaxBalanceSeconds: 0,      // Earned seconds remaining to use
-            relaxSecondsSpent: 0,        // Total elapsed breaks today
-            activeMode: 'IDLE',          // 'IDLE', 'PRODUCTIVE', 'RELAX'
-            lastCheckDate: '',           // Tracks current calendar date
-            lastTick: 0,                 // Safe drift timestamp variable
-            history: []                  // Stores chronological stats of previous days
-        };
-
-        // SOUND SYNTHESIS CHIPS (Web Audio API - fallback zero installations)
+        // Web Audio Context Synthesizer for notifications
         let audioCtx = null;
-        
-        function initAudio() {
+        function getAudioContext() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-        }
-
-        // Mobile short tactile vibration trigger helper
-        function triggerHaptic(duration = 15) {
-            if (navigator.vibrate) {
-                navigator.vibrate(duration);
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
+            return audioCtx;
         }
 
-        function playSound(type) {
+        function playSoundTone(freqs, duration, type = 'sine') {
             try {
-                initAudio();
-                if (!audioCtx) return;
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
                 
-                // Trigger tactile feedback during alarms or starts
-                if (type === 'alert') {
-                    triggerHaptic([40, 50, 40]);
-                } else {
-                    triggerHaptic(15);
-                }
-
-                const osc = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                osc.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-
-                const now = audioCtx.currentTime;
-
-                if (type === 'start_work') {
-                    // Ascending positive chime
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(440, now); // A4
-                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
-                    gainNode.gain.setValueAtTime(0.15, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
-                } else if (type === 'start_relax') {
-                    // Relaxed smooth warm swell
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(329.63, now); // E4
-                    osc.frequency.exponentialRampToValueAtTime(493.88, now + 0.3); // B4
-                    gainNode.gain.setValueAtTime(0.15, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                    osc.start(now);
-                    osc.stop(now + 0.4);
-                } else if (type === 'pause') {
-                    // Quick neutral buzz out
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, now);
-                    osc.frequency.setValueAtTime(147, now + 0.1);
-                    gainNode.gain.setValueAtTime(0.08, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    osc.start(now);
-                    osc.stop(now + 0.2);
-                } else if (type === 'alert') {
-                    // Loud pulsing double alarm (warning style)
-                    const osc2 = audioCtx.createOscillator();
-                    const gain2 = audioCtx.createGain();
-                    osc2.connect(gain2);
-                    gain2.connect(audioCtx.destination);
+                freqs.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
                     
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(330, now);
-                    osc.frequency.setValueAtTime(293.66, now + 0.2);
-                    gainNode.gain.setValueAtTime(0.2, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.12);
                     
-                    osc2.type = 'sine';
-                    osc2.frequency.setValueAtTime(660, now);
-                    osc2.frequency.setValueAtTime(587.33, now + 0.2);
-                    gain2.gain.setValueAtTime(0.1, now);
-                    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + duration);
                     
-                    osc.start(now);
-                    osc2.start(now);
-                    osc.stop(now + 0.5);
-                    osc2.stop(now + 0.5);
-                } else if (type === 'milestone') {
-                    // Confetti achievement bells
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now); // C5
-                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-                    osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
-                    gainNode.gain.setValueAtTime(0.2, now);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                    osc.start(now);
-                    osc.stop(now + 0.5);
-                }
-            } catch (err) {
-                console.warn("Audio Context blocked or failed initialization.", err);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.start(now + idx * 0.12);
+                    osc.stop(now + idx * 0.12 + duration);
+                });
+            } catch (e) {
+                console.warn("Audio context not supported/blocked by browser gesture policy", e);
             }
         }
 
-        // DYNAMIC UTILITIES & HELPERS
-        function formatTime(totalSeconds) {
-            const floorSecs = Math.max(0, Math.floor(totalSeconds));
-            const hrs = Math.floor(floorSecs / 3600);
-            const mins = Math.floor((floorSecs % 3600) / 60);
-            const secs = floorSecs % 60;
+        const Chimes = {
+            workStart: () => playSoundTone([523.25, 659.25, 783.99, 1046.50], 0.4), // Uplifting major chord C
+            relaxStart: () => playSoundTone([587.33, 739.99, 880.00, 1174.66], 0.5), // Calm pleasant chord D
+            alarmDepleted: () => {
+                playSoundTone([440.0, 440.0], 0.3, 'triangle');
+                setTimeout(() => playSoundTone([440.0, 440.0], 0.3, 'triangle'), 350);
+            }
+        };
+
+        // STATE DEFAULTS
+        let state = {
+            productiveSeconds: 0,
+            relaxBalanceSeconds: 0,
+            relaxSecondsSpent: 0,
+            ratio: 0.5,
+            lastCheckedDate: '',
+            currentMode: 'IDLE', // 'IDLE', 'PRODUCTIVE', 'RELAXING'
+            lastActiveTimestamp: null, // used to calculate duration when app was closed
+            historyLog: []
+        };
+
+        const STORAGE_KEY = 'dopamine_bank_full_state';
+
+        // Load complete state from localStorage
+        function loadState() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                try {
+                    const loaded = JSON.parse(raw);
+                    // Merge properties safely
+                    state = { ...state, ...loaded };
+                } catch(e) {
+                    console.error("Failed to parse state from localStorage, resetting defaults.", e);
+                }
+            }
+        }
+
+        // Save complete state to localStorage
+        function saveState() {
+            // Keep the last active timestamp perfectly updated
+            state.lastActiveTimestamp = Date.now();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // Calculate and apply background progress if the user left the app running
+        function applyBackgroundElapsed() {
+            if (state.currentMode === 'IDLE' || !state.lastActiveTimestamp) {
+                return; // Nothing to catch up on
+            }
+
+            const now = Date.now();
+            const elapsedMs = now - state.lastActiveTimestamp;
+            const elapsedSeconds = Math.floor(elapsedMs / 1000);
+
+            if (elapsedSeconds <= 0) return;
+
+            console.log(`System detected background state. Restoring progress: ${elapsedSeconds}s elapsed.`);
+
+            if (state.currentMode === 'PRODUCTIVE') {
+                // Earned rewards offline
+                const earned = elapsedSeconds * state.ratio;
+                state.productiveSeconds += elapsedSeconds;
+                state.relaxBalanceSeconds += earned;
+                
+                // Fire a small success indicator on reopen
+                setTimeout(() => {
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+                }, 800);
+            } 
+            else if (state.currentMode === 'RELAXING') {
+                // Spent rewards offline
+                if (elapsedSeconds >= state.relaxBalanceSeconds) {
+                    // Fully ran out while closed!
+                    state.relaxSecondsSpent += state.relaxBalanceSeconds;
+                    state.relaxBalanceSeconds = 0;
+                    state.currentMode = 'IDLE';
+                    
+                    // Show custom depleted modal
+                    showDepletedAlert("Your relaxation balance fully ran out while you were away from the app!");
+                } else {
+                    // Partially spent balance
+                    state.relaxSecondsSpent += elapsedSeconds;
+                    state.relaxBalanceSeconds -= elapsedSeconds;
+                }
+            }
+
+            // Sync dynamic changes immediately
+            saveState();
+        }
+
+        function showDepletedAlert(messageText) {
+            document.getElementById('depleted-modal-msg').innerText = messageText;
+            document.getElementById('modal-depleted').classList.remove('hidden');
+            Chimes.alarmDepleted();
+            // Start intermittent alarm chimes while alert is open
+            const alarmInterval = setInterval(() => {
+                if (!document.getElementById('modal-depleted').classList.contains('hidden')) {
+                    Chimes.alarmDepleted();
+                } else {
+                    clearInterval(alarmInterval);
+                }
+            }, 1200);
+        }
+
+        let timerIntervalId = null;
+
+        function startTimerInterval() {
+            stopTimerInterval(); // guard
+            
+            timerIntervalId = setInterval(() => {
+                // Check if date changed during active execution (midnight rollover)
+                checkDailyReset();
+
+                if (state.currentMode === 'PRODUCTIVE') {
+                    state.productiveSeconds += 1;
+                    state.relaxBalanceSeconds += (1 * state.ratio);
+                } 
+                else if (state.currentMode === 'RELAXING') {
+                    if (state.relaxBalanceSeconds >= 1) {
+                        state.relaxBalanceSeconds -= 1;
+                        state.relaxSecondsSpent += 1;
+                    } else {
+                        state.relaxBalanceSeconds = 0;
+                        state.currentMode = 'IDLE';
+                        stopTimerInterval();
+                        showDepletedAlert("You have run out of earned balance! Pivot immediately to productive time to stack up more.");
+                    }
+                }
+
+                saveState();
+                updateUI();
+            }, 1000);
+        }
+
+        function stopTimerInterval() {
+            if (timerIntervalId) {
+                clearInterval(timerIntervalId);
+                timerIntervalId = null;
+            }
+        }
+
+        // Format duration into standard HH:MM:SS format
+        function formatDuration(totalSeconds) {
+            const totalSecs = Math.floor(totalSeconds);
+            const hrs = Math.floor(totalSecs / 3600);
+            const mins = Math.floor((totalSecs % 3600) / 60);
+            const secs = totalSecs % 60;
             return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
+        // Update all metrics on screen dynamically
         function updateUI() {
-            // Numbers & Times
-            document.getElementById('stat-work').innerText = formatTime(state.productiveSeconds);
-            document.getElementById('stat-balance').innerText = formatTime(state.relaxBalanceSeconds);
-            document.getElementById('stat-relax').innerText = formatTime(state.relaxSecondsSpent);
+            // Update Stat Displays
+            document.getElementById('stat-work').innerText = formatDuration(state.productiveSeconds);
+            document.getElementById('stat-balance').innerText = formatDuration(state.relaxBalanceSeconds);
+            document.getElementById('stat-relax').innerText = formatDuration(state.relaxSecondsSpent);
             
-            // Slider display description helper
-            const ratioVal = state.ratio;
-            document.getElementById('ratio-explanation').innerText = `1 Work Min = ${ratioVal} Break Mins (Ratio ${Math.round(10/ratioVal)/10}:1)`;
-            document.getElementById('label-ratio').innerText = `${ratioVal}x`;
+            // Highlight current mode classes
+            const balanceCard = document.getElementById('hero-balance-card');
+            const stateBanner = document.getElementById('state-banner');
+            const stateText = document.getElementById('state-text');
+            const stateDot = document.getElementById('state-dot');
 
-            // Setup buttons state disabling/visual indicators
-            const startWorkBtn = document.getElementById('btn-start-work');
-            const startRelaxBtn = document.getElementById('btn-start-relax');
-            const globalPause = document.getElementById('global-pause-container');
-            const banner = document.getElementById('state-banner');
-            const bannerText = document.getElementById('state-text');
-            const bannerDot = document.getElementById('state-dot');
-            const heroCard = document.getElementById('hero-balance-card');
+            // Reset dynamic indicator visual classes
+            balanceCard.className = "bg-gradient-to-b from-slate-900 to-slate-900/80 border-2 border-slate-800/80 rounded-xl md:rounded-2xl p-2.5 md:p-5 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-xl transition-all duration-500";
+            stateDot.className = "relative inline-flex rounded-full h-2 w-2 bg-slate-500";
 
-            // Reset active styles classes
-            startWorkBtn.className = startWorkBtn.className.replace(/border-emerald-500\/100/g, "").replace(/bg-slate-900\/50/g, "");
-            startRelaxBtn.className = startRelaxBtn.className.replace(/border-indigo-500\/100/g, "").replace(/bg-slate-900\/50/g, "");
-            
-            // Disallow starting break if balance has flatlined
-            if (state.relaxBalanceSeconds <= 0 && state.activeMode !== 'PRODUCTIVE') {
-                startRelaxBtn.setAttribute('disabled', 'true');
-                document.getElementById('relax-allowance-indicator').className = "text-[10px] text-rose-400 font-bold uppercase bg-rose-500/10 px-2 py-0.5 rounded-md";
-                document.getElementById('relax-allowance-indicator').innerText = "Bank Empty";
-            } else {
-                startRelaxBtn.removeAttribute('disabled');
-                document.getElementById('relax-allowance-indicator').className = "text-[10px] text-indigo-400 font-bold uppercase bg-indigo-500/10 px-2 py-0.5 rounded-md";
-                document.getElementById('relax-allowance-indicator').innerText = "Spend Currency";
+            if (state.currentMode === 'PRODUCTIVE') {
+                balanceCard.classList.add('border-emerald-500/80', 'glow-green');
+                stateBanner.className = "w-full text-center py-1.5 px-4 rounded-full bg-emerald-950/40 border border-emerald-500/20 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-emerald-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300";
+                stateText.innerText = "Productive focus session active";
+                stateDot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-400";
+            } 
+            else if (state.currentMode === 'RELAXING') {
+                balanceCard.classList.add('border-indigo-500/80', 'glow-indigo');
+                stateBanner.className = "w-full text-center py-1.5 px-4 rounded-full bg-indigo-950/40 border border-indigo-500/20 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-indigo-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300";
+                stateText.innerText = "Distraction break countdown active";
+                stateDot.className = "relative inline-flex rounded-full h-2 w-2 bg-indigo-400";
+            } 
+            else {
+                stateBanner.className = "w-full text-center py-1.5 px-4 rounded-full bg-slate-900/50 border border-slate-800 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-slate-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300";
+                stateText.innerText = "Bank Paused";
             }
 
-            if (state.activeMode === 'PRODUCTIVE') {
-                banner.className = "w-full text-center py-1.5 px-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-emerald-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300 shadow-lg glow-green";
-                bannerText.innerText = "ACCUMULATING CHIPS";
-                bannerDot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-400";
-                
-                startWorkBtn.classList.add('border-emerald-500/100', 'bg-slate-900/50');
-                startWorkBtn.querySelector('#icon-work-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-emerald-400 animate-pulse";
-                startWorkBtn.querySelector('span:first-of-type').innerText = "Working / Earning...";
-                
-                startRelaxBtn.classList.add('opacity-30', 'pointer-events-none');
-                globalPause.classList.remove('hidden');
-                heroCard.classList.add('glow-green');
-                heroCard.classList.remove('glow-indigo');
-            } else if (state.activeMode === 'RELAX') {
-                banner.className = "w-full text-center py-1.5 px-4 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-indigo-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300 shadow-lg glow-indigo";
-                bannerText.innerText = "SPENDING BREAK BALANCE";
-                bannerDot.className = "relative inline-flex rounded-full h-2 w-2 bg-indigo-400";
-
-                startRelaxBtn.classList.add('border-indigo-500/100', 'bg-slate-900/50');
-                startRelaxBtn.querySelector('#icon-relax-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] animate-spin";
-                startRelaxBtn.querySelector('span:first-of-type').innerText = "On break / spending...";
-
-                startWorkBtn.classList.add('opacity-30', 'pointer-events-none');
-                globalPause.classList.remove('hidden');
-                heroCard.classList.add('glow-indigo');
-                heroCard.classList.remove('glow-green');
-            } else {
-                // IDLE
-                banner.className = "w-full text-center py-1.5 px-4 rounded-full bg-slate-900/50 border border-slate-800 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-slate-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300";
-                bannerText.innerText = "Idle / Paused";
-                bannerDot.className = "relative inline-flex rounded-full h-2 w-2 bg-slate-500";
-
-                startWorkBtn.querySelector('#icon-work-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-emerald-400";
-                startWorkBtn.querySelector('span:first-of-type').innerText = "Start Productive Time";
-                startWorkBtn.classList.remove('opacity-30', 'pointer-events-none');
-
-                startRelaxBtn.querySelector('#icon-relax-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5]";
-                startRelaxBtn.querySelector('span:first-of-type').innerText = "Start Break / Spend";
-                if (state.relaxBalanceSeconds > 0) {
-                    startRelaxBtn.classList.remove('opacity-30', 'pointer-events-none');
-                }
-
-                globalPause.classList.add('hidden');
-                heroCard.classList.remove('glow-green', 'glow-indigo');
-            }
-        }
-
-        // PERSISTENCE ENGINE & TIME SLIP INTEGRATION
-        function saveStateToLocal() {
-            localStorage.setItem('dopamine_banker_v1', JSON.stringify({
-                ratio: state.ratio,
-                productiveSeconds: state.productiveSeconds,
-                relaxBalanceSeconds: state.relaxBalanceSeconds,
-                relaxSecondsSpent: state.relaxSecondsSpent,
-                lastCheckDate: state.lastCheckDate,
-                history: state.history
-            }));
-        }
-
-        function loadStateFromLocal() {
-            const savedRaw = localStorage.getItem('dopamine_banker_v1');
-            if (savedRaw) {
-                try {
-                    const parsed = JSON.parse(savedRaw);
-                    state.ratio = parsed.ratio ?? 0.5;
-                    state.productiveSeconds = parsed.productiveSeconds ?? 0;
-                    state.relaxBalanceSeconds = parsed.relaxBalanceSeconds ?? 0;
-                    state.relaxSecondsSpent = parsed.relaxSecondsSpent ?? 0;
-                    state.lastCheckDate = parsed.lastCheckDate ?? new Date().toDateString();
-                    state.history = parsed.history ?? [];
-                } catch (e) {
-                    console.error("Local storage decoding failed, structural backup fallback initiated.", e);
-                }
-            } else {
-                state.lastCheckDate = new Date().toDateString();
-            }
+            // Sync configurations
+            document.getElementById('label-ratio').innerText = `${state.ratio.toFixed(1)}x`;
+            document.getElementById('label-ratio-val').innerText = `1 : ${state.ratio.toFixed(1)}`;
             document.getElementById('ratio-slider').value = state.ratio;
-        }
+            document.getElementById('ratio-explanation').innerText = `1 Work min = ${Math.round(60 * state.ratio)}s Break (${(1 / state.ratio).toFixed(1)}:1 Ratio)`;
 
-        function checkDailyReset() {
-            const currentDay = new Date().toDateString();
-            if (state.lastCheckDate && state.lastCheckDate !== currentDay) {
-                // Log the previous day to history bank before clearing
-                const entry = {
-                    date: state.lastCheckDate,
-                    worked: state.productiveSeconds,
-                    spent: state.relaxSecondsSpent,
-                    ratio: state.ratio
-                };
-                
-                // Retain max last 15 days of storage
-                state.history.unshift(entry);
-                if (state.history.length > 15) state.history.pop();
+            // Handle preset button high-contrast visual focus
+            document.querySelectorAll('.ratio-preset-btn').forEach(btn => {
+                const val = parseFloat(btn.dataset.val);
+                if (Math.abs(val - state.ratio) < 0.05) {
+                    btn.className = "ratio-preset-btn flex-1 md:flex-initial bg-indigo-500/20 border border-indigo-500/50 text-indigo-300 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px] transition-colors";
+                } else {
+                    btn.className = "ratio-preset-btn flex-1 md:flex-initial bg-slate-950 hover:bg-slate-900 border border-slate-800 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px] transition-colors";
+                }
+            });
 
-                // Zero-out for fresh start
-                state.productiveSeconds = 0;
-                state.relaxBalanceSeconds = 0;
-                state.relaxSecondsSpent = 0;
-                state.lastCheckDate = currentDay;
-                state.activeMode = 'IDLE';
+            // Adjust CTA Button Labels & Displays based on state
+            const workBtn = document.getElementById('btn-start-work');
+            const relaxBtn = document.getElementById('btn-start-relax');
+            const pauseContainer = document.getElementById('global-pause-container');
 
-                saveStateToLocal();
-                buildHistoryLog();
-                
-                // Show notification
-                showNotification("Daily reset occurred! A clean slate to build focus.", "info");
+            if (state.currentMode === 'PRODUCTIVE') {
+                workBtn.className = "group relative overflow-hidden bg-emerald-950/30 border border-emerald-500/40 hover:bg-emerald-950/50 text-white rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform scale-[0.98] cursor-pointer shadow-lg min-h-[120px] md:min-h-[170px]";
+                document.getElementById('icon-container-work').className = "bg-emerald-500/20 text-emerald-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl scale-110 mb-2 md:mb-3";
+                document.getElementById('icon-work-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-emerald-400 animate-pulse";
+                document.getElementById('text-work-btn').innerText = "Focus Session Active";
+
+                // Idle standard style for other
+                relaxBtn.className = "group relative overflow-hidden bg-slate-950/40 border border-slate-900 text-slate-600 rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 min-h-[120px] md:min-h-[170px] pointer-events-none opacity-40";
+                pauseContainer.classList.remove('hidden');
+            } 
+            else if (state.currentMode === 'RELAXING') {
+                relaxBtn.className = "group relative overflow-hidden bg-indigo-950/30 border border-indigo-500/40 hover:bg-indigo-950/50 text-white rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform scale-[0.98] cursor-pointer shadow-lg min-h-[120px] md:min-h-[170px]";
+                document.getElementById('icon-container-relax').className = "bg-indigo-500/20 text-indigo-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl scale-110 mb-2 md:mb-3";
+                document.getElementById('icon-relax-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-indigo-400 animate-pulse";
+                document.getElementById('text-relax-btn').innerText = "Resting Countdown Active";
+
+                // Disable work selection
+                workBtn.className = "group relative overflow-hidden bg-slate-950/40 border border-slate-900 text-slate-600 rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 min-h-[120px] md:min-h-[170px] pointer-events-none opacity-40";
+                pauseContainer.classList.remove('hidden');
+            } 
+            else {
+                // IDLE State
+                workBtn.className = "group relative overflow-hidden bg-slate-900 border border-slate-800 hover:border-emerald-500/40 hover:bg-slate-900/80 text-white rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform active:scale-[0.97] cursor-pointer shadow-lg hover:shadow-emerald-500/5 min-h-[120px] md:min-h-[170px]";
+                document.getElementById('icon-container-work').className = "bg-emerald-500/10 text-emerald-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-300 mb-2 md:mb-3";
+                document.getElementById('icon-work-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-none";
+                document.getElementById('text-work-btn').innerText = "Start Productive Time";
+
+                relaxBtn.className = "group relative overflow-hidden bg-slate-900 border border-slate-800 hover:border-indigo-500/40 hover:bg-slate-900/80 text-white rounded-xl md:rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform active:scale-[0.97] cursor-pointer shadow-lg hover:shadow-indigo-500/5 min-h-[120px] md:min-h-[170px]";
+                document.getElementById('icon-container-relax').className = "bg-indigo-500/10 text-indigo-400 p-2.5 md:p-4 rounded-xl md:rounded-2xl group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-300 mb-2 md:mb-3";
+                document.getElementById('icon-relax-btn').className = "w-6 h-6 md:w-10 md:h-10 stroke-[2.5] fill-none";
+                document.getElementById('text-relax-btn').innerText = "Start Break / Spend";
+
+                // Ensure break spend can't be triggered with zero balance
+                if (state.relaxBalanceSeconds <= 0) {
+                    relaxBtn.classList.add('opacity-30', 'cursor-not-allowed', 'pointer-events-none');
+                    document.getElementById('relax-allowance-indicator').className = "text-[10px] text-slate-500 font-bold uppercase bg-slate-950 px-2 py-0.5 rounded-md";
+                    document.getElementById('relax-allowance-indicator').innerText = "Balance Empty";
+                } else {
+                    document.getElementById('relax-allowance-indicator').className = "text-[10px] text-indigo-400 font-bold uppercase bg-indigo-500/10 px-2 py-0.5 rounded-md animate-pulse";
+                    document.getElementById('relax-allowance-indicator').innerText = "Spend Ready";
+                }
+
+                pauseContainer.classList.add('hidden');
             }
+
+            // Sync structural history log list
+            renderHistoryLog();
         }
 
-        function buildHistoryLog() {
-            const histCont = document.getElementById('history-container');
-            if (!state.history || state.history.length === 0) {
-                histCont.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">No previous daily logs found. Start tracking to build logs!</p>`;
+        // Check if date changed and perform auto reset archiving
+        function checkDailyReset() {
+            const todayStr = new Date().toLocaleDateString();
+            
+            // First time initialization
+            if (!state.lastCheckedDate) {
+                state.lastCheckedDate = todayStr;
+                saveState();
                 return;
             }
 
-            histCont.innerHTML = state.history.map(item => `
-                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs">
-                    <div class="flex flex-col gap-0.5">
-                        <span class="font-bold text-slate-300">${item.date}</span>
-                        <span class="text-[10px] text-slate-500 font-semibold uppercase">Ratio Limit: 1 to ${item.ratio}</span>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-right">
-                            <p class="text-[9px] text-emerald-500 uppercase tracking-wide font-bold">Focus</p>
-                            <p class="font-mono font-bold text-slate-300">${formatTime(item.worked)}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[9px] text-indigo-400 uppercase tracking-wide font-bold">Break</p>
-                            <p class="font-mono font-bold text-slate-300">${formatTime(item.spent)}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+            // Midnight date change triggered!
+            if (state.lastCheckedDate !== todayStr) {
+                console.log("Midnight date rollover detected! Auto-archiving previous daily log.");
 
-        // CUSTOM TOAST NOTIFICATION MAKER
-        function showNotification(message, theme = 'info') {
-            const container = document.body;
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl transition-all duration-300 transform translate-y-10 opacity-0 z-50 flex items-center gap-2 border ${
-                theme === 'error' ? 'bg-rose-950 border-rose-800 text-rose-200' : 'bg-slate-900 border-slate-800 text-slate-200'
-            }`;
-            toast.innerHTML = `<i data-lucide="${theme === 'error' ? 'alert-octagon' : 'info'}" class="w-4 h-4"></i><span>${message}</span>`;
-            
-            container.appendChild(toast);
-            lucide.createIcons();
-            
-            // Animate In
-            setTimeout(() => {
-                toast.classList.remove('translate-y-10', 'opacity-0');
-            }, 10);
-
-            // Out Trigger
-            setTimeout(() => {
-                toast.classList.add('translate-y-10', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        // TICKER SYSTEM INTERCEPT
-        let animationFrameId = null;
-        let lastTimestamp = 0;
-
-        function mainLoop(timestamp) {
-            if (!lastTimestamp) lastTimestamp = timestamp;
-            const elapsedMs = timestamp - lastTimestamp;
-            lastTimestamp = timestamp;
-
-            if (state.activeMode !== 'IDLE') {
-                checkDailyReset();
-                const deltaSec = elapsedMs / 1000;
-
-                if (state.activeMode === 'PRODUCTIVE') {
-                    // Accumulating Time
-                    state.productiveSeconds += deltaSec;
-                    
-                    // Increment and check logic milestones
-                    const prevSecs = state.relaxBalanceSeconds;
-                    state.relaxBalanceSeconds += (deltaSec * state.ratio);
-                    
-                    // Fire a satisfying celebration every full hour focused
-                    if (Math.floor(state.productiveSeconds / 3600) > Math.floor((state.productiveSeconds - deltaSec) / 3600)) {
-                        triggerMilestoneCelebration();
-                    }
-                } else if (state.activeMode === 'RELAX') {
-                    // Depleting Time Bank
-                    state.relaxSecondsSpent += deltaSec;
-                    state.relaxBalanceSeconds -= deltaSec;
-
-                    // Out of balance safety check
-                    if (state.relaxBalanceSeconds <= 0) {
-                        state.relaxBalanceSeconds = 0;
-                        state.activeMode = 'IDLE';
-                        playSound('alert');
-                        showNotification("Relax balance depleted! Re-focus to accumulate more time.", "error");
-                    }
+                // Keep stats if any work was tracked
+                if (state.productiveSeconds > 0 || state.relaxSecondsSpent > 0) {
+                    const loggedDay = {
+                        date: state.lastCheckedDate,
+                        productive: state.productiveSeconds,
+                        relaxSpent: state.relaxSecondsSpent,
+                        netEarnedRatio: state.ratio
+                    };
+                    state.historyLog.unshift(loggedDay);
                 }
+
+                // Reset core counters
+                state.productiveSeconds = 0;
+                state.relaxBalanceSeconds = 0;
+                state.relaxSecondsSpent = 0;
+                state.lastCheckedDate = todayStr;
+                state.currentMode = 'IDLE';
+                stopTimerInterval();
                 
-                saveStateToLocal();
+                saveState();
                 updateUI();
+                
+                // Alert user
+                showDepletedAlert("Welcome to a brand new day! Your balances have reset cleanly so you can focus fresh.");
+            }
+        }
+
+        // History Log List rendering engine
+        function renderHistoryLog() {
+            const container = document.getElementById('history-container');
+            if (state.historyLog.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">No previous daily logs found. Start tracking to build logs!</p>`;
+                return;
             }
 
-            animationFrameId = requestAnimationFrame(mainLoop);
-        }
-
-        function triggerMilestoneCelebration() {
-            playSound('milestone');
-            confetti({
-                particleCount: 80,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#10b981', '#6366f1', '#f59e0b']
+            let html = '<div class="space-y-2.5">';
+            state.historyLog.forEach(log => {
+                html += `
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-900 flex justify-between items-center text-xs">
+                        <div class="space-y-0.5">
+                            <span class="font-bold text-slate-300 block">${log.date}</span>
+                            <span class="text-[10px] text-slate-500">Ratio Rate: 1:${log.netEarnedRatio}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <span class="font-mono font-semibold text-emerald-400 block">+ ${formatDuration(log.productive)}</span>
+                                <span class="text-[9px] text-slate-500 uppercase font-medium">Work Focus</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-mono font-semibold text-indigo-400 block">- ${formatDuration(log.relaxSpent)}</span>
+                                <span class="text-[9px] text-slate-500 uppercase font-medium">Break Spent</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
-            showNotification("Hour focus milestone reached! Double dopamine multiplier achieved.", "info");
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        // EVENT WIRINGS & INTERACTION CONTROLS
         window.addEventListener('load', () => {
-            loadStateFromLocal();
-            checkDailyReset();
-            buildHistoryLog();
-            updateUI();
-            
-            // Initiate core render tick
             lucide.createIcons();
-            lastTimestamp = performance.now();
-            requestAnimationFrame(mainLoop);
-        });
 
-        // Ratio sliders
-        const ratioSlider = document.getElementById('ratio-slider');
-        ratioSlider.addEventListener('input', (e) => {
-            state.ratio = parseFloat(e.target.value);
-            saveStateToLocal();
-            updateUI();
-        });
+            // 1. Restore previous values and history
+            loadState();
 
-        // Preset Ratio Buttons
-        document.querySelectorAll('.ratio-preset-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const targetVal = parseFloat(e.currentTarget.getAttribute('data-val'));
-                state.ratio = targetVal;
-                ratioSlider.value = targetVal;
+            // 2. Resolve calculations for missing background runtime
+            applyBackgroundElapsed();
 
-                // Toggle preset selected style
-                document.querySelectorAll('.ratio-preset-btn').forEach(btn => {
-                    btn.className = "ratio-preset-btn flex-1 md:flex-initial bg-slate-950 hover:bg-slate-900 border border-slate-800 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px]";
-                });
-                e.currentTarget.className = "ratio-preset-btn flex-1 md:flex-initial bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] md:text-xs px-2.5 py-2 rounded-lg font-bold min-h-[38px]";
+            // 3. Process immediate status triggers
+            checkDailyReset();
 
-                playSound('start_work');
-                saveStateToLocal();
-                updateUI();
-            });
-        });
-
-        // Mode triggers
-        document.getElementById('btn-start-work').addEventListener('click', () => {
-            playSound('start_work');
-            state.activeMode = 'PRODUCTIVE';
-            saveStateToLocal();
-            updateUI();
-        });
-
-        document.getElementById('btn-start-relax').addEventListener('click', () => {
-            if (state.relaxBalanceSeconds > 0) {
-                playSound('start_relax');
-                state.activeMode = 'RELAX';
-                saveStateToLocal();
-                updateUI();
-            } else {
-                showNotification("No relax balance left! You must perform positive habits first.", "error");
+            // 4. If loaded in active execution state, automatically spin up active interval loops
+            if (state.currentMode !== 'IDLE') {
+                startTimerInterval();
             }
-        });
 
-        document.getElementById('btn-pause-global').addEventListener('click', () => {
-            playSound('pause');
-            state.activeMode = 'IDLE';
-            saveStateToLocal();
+            // 5. Initial DOM Refresh
             updateUI();
-        });
 
-        // Modal triggers & handlers
-        const modalInfo = document.getElementById('modal-info');
-        const modalReset = document.getElementById('modal-reset');
-        const modalStats = document.getElementById('modal-stats');
-
-        document.getElementById('btn-info').addEventListener('click', () => {
-            initAudio(); // Warm audio context directly on user interaction
-            modalInfo.classList.remove('hidden');
-        });
-
-        document.getElementById('btn-settings').addEventListener('click', () => {
-            modalReset.classList.remove('hidden');
-        });
-
-        document.getElementById('btn-stats').addEventListener('click', () => {
-            buildHistoryLog();
-            modalStats.classList.remove('hidden');
-        });
-
-        document.querySelectorAll('.close-modal').forEach(el => {
-            el.addEventListener('click', () => {
-                modalInfo.classList.add('hidden');
-                modalStats.classList.add('hidden');
-            });
-        });
-
-        document.getElementById('btn-cancel-reset').addEventListener('click', () => {
-            modalReset.classList.add('hidden');
-        });
-
-        document.getElementById('btn-confirm-reset').addEventListener('click', () => {
-            state.productiveSeconds = 0;
-            state.relaxBalanceSeconds = 0;
-            state.relaxSecondsSpent = 0;
-            state.activeMode = 'IDLE';
-            saveStateToLocal();
-            updateUI();
-            modalReset.classList.add('hidden');
-            playSound('pause');
-            showNotification("Your Dopamine balance has been completely reset.", "info");
-        });
-
-        // Global dismiss for overlays on backdrop tap
-        [modalInfo, modalReset, modalStats].forEach(m => {
-            m.addEventListener('click', (e) => {
-                if (e.target === m) {
-                    m.classList.add('hidden');
+            // Continuous preservation save on page unloads/hides
+            window.addEventListener('pagehide', saveState);
+            window.addEventListener('beforeunload', saveState);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    saveState();
+                } else {
+                    // Page made active again - execute background checks to see if time elapsed
+                    applyBackgroundElapsed();
+                    updateUI();
                 }
+            });
+
+            // Action Triggers: Start focus
+            document.getElementById('btn-start-work').addEventListener('click', () => {
+                getAudioContext(); // warm context
+                Chimes.workStart();
+
+                state.currentMode = 'PRODUCTIVE';
+                saveState();
+                updateUI();
+                startTimerInterval();
+                
+                // Soft screen feedback
+                confetti({ particleCount: 20, spread: 45, origin: { y: 0.9 } });
+            });
+
+            // Action Triggers: Start Break Spending
+            document.getElementById('btn-start-relax').addEventListener('click', () => {
+                if (state.relaxBalanceSeconds <= 0) return;
+                
+                getAudioContext();
+                Chimes.relaxStart();
+
+                state.currentMode = 'RELAXING';
+                saveState();
+                updateUI();
+                startTimerInterval();
+            });
+
+            // Action Triggers: Global Pause Session
+            document.getElementById('btn-pause-global').addEventListener('click', () => {
+                state.currentMode = 'IDLE';
+                stopTimerInterval();
+                saveState();
+                updateUI();
+                playSoundTone([440, 330], 0.2, 'sine');
+            });
+
+            // Handle slider ratio updates
+            const ratioSlider = document.getElementById('ratio-slider');
+            ratioSlider.addEventListener('input', (e) => {
+                state.ratio = parseFloat(e.target.value);
+                saveState();
+                updateUI();
+            });
+
+            // Ratio Preset Shortcut Buttons
+            document.querySelectorAll('.ratio-preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.ratio = parseFloat(btn.dataset.val);
+                    saveState();
+                    updateUI();
+                });
+            });
+
+            // Modal Interactions helper
+            function toggleModal(modalId, forceValue = null) {
+                const el = document.getElementById(modalId);
+                if (forceValue !== null) {
+                    if (forceValue) el.classList.remove('hidden');
+                    else el.classList.add('hidden');
+                } else {
+                    el.classList.toggle('hidden');
+                }
+            }
+
+            // Openers
+            document.getElementById('btn-info').addEventListener('click', () => toggleModal('modal-info', true));
+            document.getElementById('btn-settings').addEventListener('click', () => toggleModal('modal-reset', true));
+            document.getElementById('btn-stats').addEventListener('click', () => toggleModal('modal-stats', true));
+
+            // Closers
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const modal = e.target.closest('.fixed');
+                    if (modal) modal.classList.add('hidden');
+                });
+            });
+
+            // Specific Confirm Action Handlers: Confirm Reset
+            document.getElementById('btn-cancel-reset').addEventListener('click', () => toggleModal('modal-reset', false));
+            document.getElementById('btn-confirm-reset').addEventListener('click', () => {
+                state.productiveSeconds = 0;
+                state.relaxBalanceSeconds = 0;
+                state.relaxSecondsSpent = 0;
+                state.currentMode = 'IDLE';
+                stopTimerInterval();
+                
+                saveState();
+                updateUI();
+                toggleModal('modal-reset', false);
+                confetti({ colors: ['#ff0033'], particleCount: 30 });
+            });
+
+            // Alert depleted closer
+            document.getElementById('btn-close-depleted').addEventListener('click', () => {
+                toggleModal('modal-depleted', false);
+                getAudioContext(); // re-init sound contexts safely
             });
         });
     </script>
