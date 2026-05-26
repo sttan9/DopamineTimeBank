@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dopamine Time Bank</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter & JetBrains Mono for timers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti for rewards -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom glow systems & scrollbars */
+        .glow-green { box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
+        .glow-indigo { box-shadow: 0 0 25px rgba(99, 102, 241, 0.2); }
+        .glow-rose { box-shadow: 0 0 25px rgba(244, 63, 94, 0.2); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.5); border-radius: 9999px; }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 font-sans min-h-full flex flex-col justify-between selection:bg-indigo-500 selection:text-white antialiased transition-colors duration-300">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-emerald-500 to-indigo-500 p-2 rounded-xl text-slate-950">
+                    <i data-lucide="piggy-bank" class="w-6 h-6 stroke-[2.5]"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">DOPAMINE BANK</h1>
+                    <p class="text-xs text-slate-500 font-semibold tracking-wider uppercase">Gamified Mind Control</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button id="btn-stats" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="View Daily History">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                </button>
+                <button id="btn-info" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="How This Works">
+                    <i data-lucide="help-circle" class="w-5 h-5"></i>
+                </button>
+                <button id="btn-settings" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-900 transition-all" title="Quick Reset">
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT APP WINDOW -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4 max-w-4xl w-full mx-auto space-y-6">
+
+        <!-- STATUS STATUS PILL & STATE OVERVIEW -->
+        <div id="state-banner" class="w-full text-center py-2 px-4 rounded-full bg-slate-900/50 border border-slate-800 text-xs font-semibold uppercase tracking-widest text-slate-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-500" id="state-dot"></span>
+            </span>
+            <span id="state-text">Ready to Accumulate</span>
+        </div>
+
+        <!-- MAIN CORE BALANCES & STATS CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+            
+            <!-- PRODUCTIVE TIME EARNED -->
+            <div class="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 flex flex-col items-center justify-between text-center relative overflow-hidden transition-all duration-300 hover:border-slate-800">
+                <div class="absolute top-3 left-3 text-emerald-500/20"><i data-lucide="zap" class="w-12 h-12 stroke-[1.5]"></i></div>
+                <span class="text-xs font-bold text-emerald-500 tracking-widest uppercase mb-1 z-10">Productive Work</span>
+                <span id="stat-work" class="font-mono text-3xl font-bold tracking-tight text-slate-100 my-2 z-10">00:00:00</span>
+                <p class="text-[10px] text-slate-500 font-medium tracking-wide z-10">Accumulated Focus Time Today</p>
+            </div>
+
+            <!-- RELAX BANK BALANCE (HERO CARD) -->
+            <div id="hero-balance-card" class="bg-gradient-to-b from-slate-900 to-slate-900/80 border-2 border-slate-800/80 rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden shadow-2xl transition-all duration-500 col-span-1 md:col-span-1">
+                <span class="text-xs font-black text-indigo-400 tracking-widest uppercase mb-1 z-10">RELAX BANK BALANCE</span>
+                <span id="stat-balance" class="font-mono text-5xl font-black tracking-tight text-white my-3 z-10 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.2)]">00:00:00</span>
+                <p id="savings-rate-label" class="text-xs text-slate-400 font-medium tracking-wide z-10 flex items-center gap-1.5 bg-slate-950/60 py-1 px-2.5 rounded-full border border-slate-800">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-indigo-400"></i> Earn Rate: <span id="label-ratio" class="font-bold text-indigo-300">1.0x</span>
+                </p>
+            </div>
+
+            <!-- RELAX TIME SPENT -->
+            <div class="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 flex flex-col items-center justify-between text-center relative overflow-hidden transition-all duration-300 hover:border-slate-800">
+                <div class="absolute top-3 right-3 text-indigo-500/10"><i data-lucide="coffee" class="w-12 h-12 stroke-[1.5]"></i></div>
+                <span class="text-xs font-bold text-indigo-400 tracking-widest uppercase mb-1 z-10">Relaxation Spent</span>
+                <span id="stat-relax" class="font-mono text-3xl font-bold tracking-tight text-slate-100 my-2 z-10">00:00:00</span>
+                <p class="text-[10px] text-slate-500 font-medium tracking-wide z-10">Spent Time on Break Today</p>
+            </div>
+
+        </div>
+
+        <!-- THE HERO ACTION PANEL (BIG INTEGRATED SWITCH SYSTEM) -->
+        <div class="w-full bg-slate-900/30 border border-slate-900 rounded-3xl p-6 relative overflow-hidden">
+            <div class="absolute -right-20 -bottom-20 bg-indigo-500/5 w-60 h-60 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -left-20 -top-20 bg-emerald-500/5 w-60 h-60 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                
+                <!-- FOCUS PILLAR -->
+                <div class="flex flex-col space-y-4">
+                    <div class="flex justify-between items-center px-1">
+                        <span class="flex items-center space-x-2 text-sm font-bold text-emerald-400 tracking-wide">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span>Productive Modes</span>
+                        </span>
+                        <span class="text-xs text-slate-500 font-semibold uppercase">Earn Currency</span>
+                    </div>
+
+                    <!-- GIANT ACTION BUTTON: START PRODUCTIVE -->
+                    <button id="btn-start-work" class="group relative overflow-hidden bg-slate-900 border border-slate-800 hover:border-emerald-500/40 hover:bg-slate-900/80 text-white rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform active:scale-[0.98] cursor-pointer shadow-lg hover:shadow-emerald-500/5 min-h-[170px]">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/0 to-emerald-500/0 group-hover:from-emerald-500/5 group-hover:to-transparent transition-all duration-300"></div>
+                        <div class="bg-emerald-500/10 text-emerald-400 p-4 rounded-2xl group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all duration-300 mb-3">
+                            <i data-lucide="play" id="icon-work-btn" class="w-10 h-10 stroke-[2.5] fill-emerald-400"></i>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-wide uppercase group-hover:text-emerald-300 transition-colors">Start Productive Time</span>
+                        <span class="text-xs text-slate-500 mt-1">Study, Work, Exercise, Create</span>
+                    </button>
+                </div>
+
+                <!-- RELAX PILLAR -->
+                <div class="flex flex-col space-y-4">
+                    <div class="flex justify-between items-center px-1">
+                        <span class="flex items-center space-x-2 text-sm font-bold text-indigo-400 tracking-wide">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                            <span>Relax Break Modes</span>
+                        </span>
+                        <span id="relax-allowance-indicator" class="text-xs text-indigo-400 font-bold uppercase bg-indigo-500/10 px-2 py-0.5 rounded-md">Spend Currency</span>
+                    </div>
+
+                    <!-- GIANT ACTION BUTTON: START RELAXING -->
+                    <button id="btn-start-relax" class="group relative overflow-hidden bg-slate-900 border border-slate-800 hover:border-indigo-500/40 hover:bg-slate-900/80 text-white rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-all duration-300 transform active:scale-[0.98] cursor-pointer shadow-lg hover:shadow-indigo-500/5 disabled:opacity-30 disabled:cursor-not-allowed disabled:pointer-events-none min-h-[170px]">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/0 to-indigo-500/0 group-hover:from-indigo-500/5 group-hover:to-transparent transition-all duration-300"></div>
+                        <div class="bg-indigo-500/10 text-indigo-400 p-4 rounded-2xl group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-300 mb-3">
+                            <i data-lucide="coffee" id="icon-relax-btn" class="w-10 h-10 stroke-[2.5]"></i>
+                        </div>
+                        <span class="text-xl font-extrabold tracking-wide uppercase group-hover:text-indigo-300 transition-colors">Start Break / Spend</span>
+                        <span class="text-xs text-slate-500 mt-1">Videos, Socials, Games, rest</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- CENTER BLOCKING / PAUSE BUTTON FOR TIMERS -->
+            <div id="global-pause-container" class="hidden mt-6 pt-6 border-t border-slate-900">
+                <button id="btn-pause-global" class="w-full bg-gradient-to-r from-rose-500 to-amber-500 text-slate-950 hover:from-rose-400 hover:to-amber-400 py-5 rounded-2xl font-extrabold text-lg uppercase tracking-wider transition-all duration-300 transform active:scale-[0.99] shadow-xl flex items-center justify-center gap-3">
+                    <i data-lucide="square" class="w-5 h-5 fill-slate-950"></i>
+                    <span>Pause Current Session</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- CONFIGURATION RATIO CONTROLLER -->
+        <div class="w-full bg-slate-900/20 border border-slate-900 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex-grow w-full space-y-2">
+                <div class="flex justify-between items-center">
+                    <label for="ratio-slider" class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
+                        Conversion Ratio: <span class="font-bold text-indigo-400">x to y</span>
+                    </label>
+                    <span class="text-xs text-slate-500" id="ratio-explanation">1 Work min = 0.5 Break mins (2:1 Ratio)</span>
+                </div>
+                <input type="range" id="ratio-slider" min="0.1" max="2.0" step="0.1" value="0.5" class="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500 focus:outline-none">
+            </div>
+
+            <!-- Preset Shortcuts -->
+            <div class="flex flex-col space-y-2 w-full md:w-auto">
+                <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Presets</span>
+                <div class="flex gap-2">
+                    <button class="ratio-preset-btn bg-slate-950 hover:bg-slate-900 border border-slate-800 text-xs px-3 py-2 rounded-lg font-bold" data-val="0.2">Hardcore (5:1)</button>
+                    <button class="ratio-preset-btn bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs px-3 py-2 rounded-lg font-bold" data-val="0.5">Balanced (2:1)</button>
+                    <button class="ratio-preset-btn bg-slate-950 hover:bg-slate-900 border border-slate-800 text-xs px-3 py-2 rounded-lg font-bold" data-val="1.0">Fair (1:1)</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER SYSTEMS -->
+    <footer class="border-t border-slate-900/60 bg-slate-950 py-4 px-4 text-center mt-8">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+            <p>Objective: Gamify attention span & replace passive scrolling with earned activities.</p>
+            <p class="flex items-center gap-1.5 font-semibold text-slate-400">
+                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Local Storage Active — Saved Securely on Device
+            </p>
+        </div>
+    </footer>
+
+    <!-- MODAL: DETAILED HOW TO / GUIDE -->
+    <div id="modal-info" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="help-circle" class="text-indigo-400"></i> Dopamine Banking Framework
+                </h3>
+                <button class="close-modal text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-3 text-sm text-slate-300 leading-relaxed">
+                <p>By forcing yourself to "earn" your distractions, you gamify dopamine pathways. Work becomes the pathway to freedom, and relaxation becomes a scarce, valuable resource.</p>
+                <ul class="space-y-2 list-none pl-1">
+                    <li class="flex items-start gap-2">
+                        <span class="text-emerald-400 mt-0.5">✔</span> 
+                        <span><strong>Earn Ratio (e.g. 1 to 0.5):</strong> 1 minute of hard work earns you 30 seconds of relaxation.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-400 mt-0.5">✔</span> 
+                        <span><strong>Double Tracking:</strong> Accumulate balance when doing positive habits, then flip the trigger when you start scrolling or resting.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-rose-400 mt-0.5">✔</span> 
+                        <span><strong>Zero Out Action:</strong> If your break balance hits exactly zero, the app automatically triggers an audio alarm to tell you to stop.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-slate-400 mt-0.5">✔</span> 
+                        <span><strong>Daily reset:</strong> Every single day, the tracker resets back to zero so you start fresh without carrying over massive balances.</span>
+                    </li>
+                </ul>
+            </div>
+            <button class="close-modal w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all">Get Started</button>
+        </div>
+    </div>
+
+    <!-- MODAL: RESET CONFIRMATION -->
+    <div id="modal-reset" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full space-y-4 text-center">
+            <div class="text-rose-500 mx-auto w-12 h-12 rounded-full bg-rose-500/10 flex items-center justify-center mb-2">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">Reset Today's Bank?</h3>
+            <p class="text-sm text-slate-400">This will completely zero out your productive time, relax time, and earned balance. This action cannot be undone.</p>
+            <div class="flex gap-3">
+                <button id="btn-cancel-reset" class="flex-1 bg-slate-950 hover:bg-slate-900 text-slate-300 font-bold py-2.5 rounded-xl border border-slate-800 transition-all">Cancel</button>
+                <button id="btn-confirm-reset" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-xl transition-all">Yes, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: HISTORY STATS & PREVIOUS LOGS -->
+    <div id="modal-stats" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="history" class="text-indigo-400"></i> Daily History Log
+                </h3>
+                <button class="close-modal text-slate-400 hover:text-white p-1 rounded-full hover:bg-slate-800"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div id="history-container" class="space-y-2 max-h-60 overflow-y-auto">
+                <!-- Javascript populates daily values dynamically -->
+                <p class="text-xs text-slate-500 text-center py-6">No previous daily logs found. Start tracking to build logs!</p>
+            </div>
+
+            <button class="close-modal w-full bg-slate-950 hover:bg-slate-900 text-slate-300 border border-slate-800 font-bold py-3 rounded-xl transition-all">Close</button>
+        </div>
+    </div>
+
+    <!-- AUDIO NOTIFICATION SYSTEM / AUDIO SYNTH CONTEXT -->
+    <script>
+        // SYSTEM CONSTANTS AND STATE MANAGEMENT
+        const state = {
+            ratio: 0.5,                  // Current work-to-relax conversion ratio
+            productiveSeconds: 0,        // Total accumulated study seconds
+            relaxBalanceSeconds: 0,      // Earned seconds remaining to use
+            relaxSecondsSpent: 0,        // Total elapsed breaks today
+            activeMode: 'IDLE',          // 'IDLE', 'PRODUCTIVE', 'RELAX'
+            lastCheckDate: '',           // Tracks current calendar date
+            lastTick: 0,                 // Safe drift timestamp variable
+            history: []                  // Stores chronological stats of previous days
+        };
+
+        // SOUND SYNTHESIS CHIPS (Web Audio API - fallback zero installations)
+        let audioCtx = null;
+        
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'start_work') {
+                    // Ascending positive chime
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now); // A4
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'start_relax') {
+                    // Relaxed smooth warm swell
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(329.63, now); // E4
+                    osc.frequency.exponentialRampToValueAtTime(493.88, now + 0.3); // B4
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'pause') {
+                    // Quick neutral buzz out
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(147, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.08, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'alert') {
+                    // Loud pulsing double alarm (warning style)
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(330, now);
+                    osc.frequency.setValueAtTime(293.66, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(660, now);
+                    osc2.frequency.setValueAtTime(587.33, now + 0.2);
+                    gain2.gain.setValueAtTime(0.1, now);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    
+                    osc.start(now);
+                    osc2.start(now);
+                    osc.stop(now + 0.5);
+                    osc2.stop(now + 0.5);
+                } else if (type === 'milestone') {
+                    // Confetti achievement bells
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (err) {
+                console.warn("Audio Context blocked or failed initialization.", err);
+            }
+        }
+
+        // DYNAMIC UTILITIES & HELPERS
+        function formatTime(totalSeconds) {
+            const floorSecs = Math.max(0, Math.floor(totalSeconds));
+            const hrs = Math.floor(floorSecs / 3600);
+            const mins = Math.floor((floorSecs % 3600) / 60);
+            const secs = floorSecs % 60;
+            return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function updateUI() {
+            // Numbers & Times
+            document.getElementById('stat-work').innerText = formatTime(state.productiveSeconds);
+            document.getElementById('stat-balance').innerText = formatTime(state.relaxBalanceSeconds);
+            document.getElementById('stat-relax').innerText = formatTime(state.relaxSecondsSpent);
+            
+            // Slider display description helper
+            const ratioVal = state.ratio;
+            document.getElementById('ratio-explanation').innerText = `1 Work Min = ${ratioVal} Break Mins (Ratio ${Math.round(10/ratioVal)/10}:1)`;
+            document.getElementById('label-ratio').innerText = `${ratioVal}x`;
+
+            // Setup buttons state disabling/visual indicators
+            const startWorkBtn = document.getElementById('btn-start-work');
+            const startRelaxBtn = document.getElementById('btn-start-relax');
+            const globalPause = document.getElementById('global-pause-container');
+            const banner = document.getElementById('state-banner');
+            const bannerText = document.getElementById('state-text');
+            const bannerDot = document.getElementById('state-dot');
+            const heroCard = document.getElementById('hero-balance-card');
+
+            // Reset active styles classes
+            startWorkBtn.className = startWorkBtn.className.replace(/border-emerald-500\/100/g, "").replace(/bg-slate-900\/50/g, "");
+            startRelaxBtn.className = startRelaxBtn.className.replace(/border-indigo-500\/100/g, "").replace(/bg-slate-900\/50/g, "");
+            
+            // Disallow starting break if balance has flatlined
+            if (state.relaxBalanceSeconds <= 0 && state.activeMode !== 'PRODUCTIVE') {
+                startRelaxBtn.setAttribute('disabled', 'true');
+                document.getElementById('relax-allowance-indicator').className = "text-xs text-rose-400 font-bold uppercase bg-rose-500/10 px-2 py-0.5 rounded-md";
+                document.getElementById('relax-allowance-indicator').innerText = "Bank Empty — Focus First";
+            } else {
+                startRelaxBtn.removeAttribute('disabled');
+                document.getElementById('relax-allowance-indicator').className = "text-xs text-indigo-400 font-bold uppercase bg-indigo-500/10 px-2 py-0.5 rounded-md";
+                document.getElementById('relax-allowance-indicator').innerText = "Spend Currency";
+            }
+
+            if (state.activeMode === 'PRODUCTIVE') {
+                banner.className = "w-full text-center py-2 px-4 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold uppercase tracking-widest text-emerald-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300 shadow-lg glow-green";
+                bannerText.innerText = "ACCUMULATING CHIPS";
+                bannerDot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-400";
+                
+                startWorkBtn.classList.add('border-emerald-500/100', 'bg-slate-900/50');
+                startWorkBtn.querySelector('#icon-work-btn').className = "w-10 h-10 stroke-[2.5] fill-emerald-400 animate-pulse";
+                startWorkBtn.querySelector('span:first-of-type').innerText = "Working / Earning...";
+                
+                startRelaxBtn.classList.add('opacity-30', 'pointer-events-none');
+                globalPause.classList.remove('hidden');
+                heroCard.classList.add('glow-green');
+                heroCard.classList.remove('glow-indigo');
+            } else if (state.activeMode === 'RELAX') {
+                banner.className = "w-full text-center py-2 px-4 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold uppercase tracking-widest text-indigo-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300 shadow-lg glow-indigo";
+                bannerText.innerText = "SPENDING BREAK BALANCE";
+                bannerDot.className = "relative inline-flex rounded-full h-2 w-2 bg-indigo-400";
+
+                startRelaxBtn.classList.add('border-indigo-500/100', 'bg-slate-900/50');
+                startRelaxBtn.querySelector('#icon-relax-btn').className = "w-10 h-10 stroke-[2.5] animate-spin";
+                startRelaxBtn.querySelector('span:first-of-type').innerText = "On break / spending...";
+
+                startWorkBtn.classList.add('opacity-30', 'pointer-events-none');
+                globalPause.classList.remove('hidden');
+                heroCard.classList.add('glow-indigo');
+                heroCard.classList.remove('glow-green');
+            } else {
+                // IDLE
+                banner.className = "w-full text-center py-2 px-4 rounded-full bg-slate-900/50 border border-slate-800 text-xs font-semibold uppercase tracking-widest text-slate-400 flex items-center justify-center gap-2 max-w-xs transition-all duration-300";
+                bannerText.innerText = "Idle / Paused";
+                bannerDot.className = "relative inline-flex rounded-full h-2 w-2 bg-slate-500";
+
+                startWorkBtn.querySelector('#icon-work-btn').className = "w-10 h-10 stroke-[2.5] fill-emerald-400";
+                startWorkBtn.querySelector('span:first-of-type').innerText = "Start Productive Time";
+                startWorkBtn.classList.remove('opacity-30', 'pointer-events-none');
+
+                startRelaxBtn.querySelector('#icon-relax-btn').className = "w-10 h-10 stroke-[2.5]";
+                startRelaxBtn.querySelector('span:first-of-type').innerText = "Start Break / Spend";
+                if (state.relaxBalanceSeconds > 0) {
+                    startRelaxBtn.classList.remove('opacity-30', 'pointer-events-none');
+                }
+
+                globalPause.classList.add('hidden');
+                heroCard.classList.remove('glow-green', 'glow-indigo');
+            }
+        }
+
+        // PERSISTENCE ENGINE & TIME SLIP INTEGRATION
+        function saveStateToLocal() {
+            localStorage.setItem('dopamine_banker_v1', JSON.stringify({
+                ratio: state.ratio,
+                productiveSeconds: state.productiveSeconds,
+                relaxBalanceSeconds: state.relaxBalanceSeconds,
+                relaxSecondsSpent: state.relaxSecondsSpent,
+                lastCheckDate: state.lastCheckDate,
+                history: state.history
+            }));
+        }
+
+        function loadStateFromLocal() {
+            const savedRaw = localStorage.getItem('dopamine_banker_v1');
+            if (savedRaw) {
+                try {
+                    const parsed = JSON.parse(savedRaw);
+                    state.ratio = parsed.ratio ?? 0.5;
+                    state.productiveSeconds = parsed.productiveSeconds ?? 0;
+                    state.relaxBalanceSeconds = parsed.relaxBalanceSeconds ?? 0;
+                    state.relaxSecondsSpent = parsed.relaxSecondsSpent ?? 0;
+                    state.lastCheckDate = parsed.lastCheckDate ?? new Date().toDateString();
+                    state.history = parsed.history ?? [];
+                } catch (e) {
+                    console.error("Local storage decoding failed, structural backup fallback initiated.", e);
+                }
+            } else {
+                state.lastCheckDate = new Date().toDateString();
+            }
+            document.getElementById('ratio-slider').value = state.ratio;
+        }
+
+        function checkDailyReset() {
+            const currentDay = new Date().toDateString();
+            if (state.lastCheckDate && state.lastCheckDate !== currentDay) {
+                // Log the previous day to history bank before clearing
+                const entry = {
+                    date: state.lastCheckDate,
+                    worked: state.productiveSeconds,
+                    spent: state.relaxSecondsSpent,
+                    ratio: state.ratio
+                };
+                
+                // Retain max last 15 days of storage
+                state.history.unshift(entry);
+                if (state.history.length > 15) state.history.pop();
+
+                // Zero-out for fresh start
+                state.productiveSeconds = 0;
+                state.relaxBalanceSeconds = 0;
+                state.relaxSecondsSpent = 0;
+                state.lastCheckDate = currentDay;
+                state.activeMode = 'IDLE';
+
+                saveStateToLocal();
+                buildHistoryLog();
+                
+                // Show notification
+                showNotification("Daily reset occurred! A clean slate to build focus.", "info");
+            }
+        }
+
+        function buildHistoryLog() {
+            const histCont = document.getElementById('history-container');
+            if (!state.history || state.history.length === 0) {
+                histCont.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">No previous daily logs found. Start tracking to build logs!</p>`;
+                return;
+            }
+
+            histCont.innerHTML = state.history.map(item => `
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-900 text-xs">
+                    <div class="flex flex-col gap-0.5">
+                        <span class="font-bold text-slate-300">${item.date}</span>
+                        <span class="text-[10px] text-slate-500 font-semibold uppercase">Ratio Limit: 1 to ${item.ratio}</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-right">
+                            <p class="text-[9px] text-emerald-500 uppercase tracking-wide font-bold">Focus</p>
+                            <p class="font-mono font-bold text-slate-300">${formatTime(item.worked)}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-indigo-400 uppercase tracking-wide font-bold">Break</p>
+                            <p class="font-mono font-bold text-slate-300">${formatTime(item.spent)}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // CUSTOM TOAST NOTIFICATION MAKER
+        function showNotification(message, theme = 'info') {
+            const container = document.body;
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl transition-all duration-300 transform translate-y-10 opacity-0 z-50 flex items-center gap-2 border ${
+                theme === 'error' ? 'bg-rose-950 border-rose-800 text-rose-200' : 'bg-slate-900 border-slate-800 text-slate-200'
+            }`;
+            toast.innerHTML = `<i data-lucide="${theme === 'error' ? 'alert-octagon' : 'info'}" class="w-4 h-4"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            lucide.createIcons();
+            
+            // Animate In
+            setTimeout(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            }, 10);
+
+            // Out Trigger
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // TICKER SYSTEM INTERCEPT
+        let animationFrameId = null;
+        let lastTimestamp = 0;
+
+        function mainLoop(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const elapsedMs = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+
+            if (state.activeMode !== 'IDLE') {
+                checkDailyReset();
+                const deltaSec = elapsedMs / 1000;
+
+                if (state.activeMode === 'PRODUCTIVE') {
+                    // Accumulating Time
+                    state.productiveSeconds += deltaSec;
+                    
+                    // Increment and check logic milestones
+                    const prevSecs = state.relaxBalanceSeconds;
+                    state.relaxBalanceSeconds += (deltaSec * state.ratio);
+                    
+                    // Fire a satisfying celebration every full hour focused
+                    if (Math.floor(state.productiveSeconds / 3600) > Math.floor((state.productiveSeconds - deltaSec) / 3600)) {
+                        triggerMilestoneCelebration();
+                    }
+                } else if (state.activeMode === 'RELAX') {
+                    // Depleting Time Bank
+                    state.relaxSecondsSpent += deltaSec;
+                    state.relaxBalanceSeconds -= deltaSec;
+
+                    // Out of balance safety check
+                    if (state.relaxBalanceSeconds <= 0) {
+                        state.relaxBalanceSeconds = 0;
+                        state.activeMode = 'IDLE';
+                        playSound('alert');
+                        showNotification("Relax balance depleted! Re-focus to accumulate more time.", "error");
+                    }
+                }
+                
+                saveStateToLocal();
+                updateUI();
+            }
+
+            animationFrameId = requestAnimationFrame(mainLoop);
+        }
+
+        function triggerMilestoneCelebration() {
+            playSound('milestone');
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#10b981', '#6366f1', '#f59e0b']
+            });
+            showNotification("Hour focus milestone reached! Double dopamine multiplier achieved.", "info");
+        }
+
+        // EVENT WIRINGS & INTERACTION CONTROLS
+        window.addEventListener('load', () => {
+            loadStateFromLocal();
+            checkDailyReset();
+            buildHistoryLog();
+            updateUI();
+            
+            // Initiate core render tick
+            lucide.createIcons();
+            lastTimestamp = performance.now();
+            requestAnimationFrame(mainLoop);
+        });
+
+        // Ratio sliders
+        const ratioSlider = document.getElementById('ratio-slider');
+        ratioSlider.addEventListener('input', (e) => {
+            state.ratio = parseFloat(e.target.value);
+            saveStateToLocal();
+            updateUI();
+        });
+
+        // Preset Ratio Buttons
+        document.querySelectorAll('.ratio-preset-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const targetVal = parseFloat(e.currentTarget.getAttribute('data-val'));
+                state.ratio = targetVal;
+                ratioSlider.value = targetVal;
+
+                // Toggle preset selected style
+                document.querySelectorAll('.ratio-preset-btn').forEach(btn => {
+                    btn.className = "ratio-preset-btn bg-slate-950 hover:bg-slate-900 border border-slate-800 text-xs px-3 py-2 rounded-lg font-bold";
+                });
+                e.currentTarget.className = "ratio-preset-btn bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs px-3 py-2 rounded-lg font-bold";
+
+                playSound('start_work');
+                saveStateToLocal();
+                updateUI();
+            });
+        });
+
+        // Mode triggers
+        document.getElementById('btn-start-work').addEventListener('click', () => {
+            playSound('start_work');
+            state.activeMode = 'PRODUCTIVE';
+            saveStateToLocal();
+            updateUI();
+        });
+
+        document.getElementById('btn-start-relax').addEventListener('click', () => {
+            if (state.relaxBalanceSeconds > 0) {
+                playSound('start_relax');
+                state.activeMode = 'RELAX';
+                saveStateToLocal();
+                updateUI();
+            } else {
+                showNotification("No relax balance left! You must perform positive habits first.", "error");
+            }
+        });
+
+        document.getElementById('btn-pause-global').addEventListener('click', () => {
+            playSound('pause');
+            state.activeMode = 'IDLE';
+            saveStateToLocal();
+            updateUI();
+        });
+
+        // Modal triggers & handlers
+        const modalInfo = document.getElementById('modal-info');
+        const modalReset = document.getElementById('modal-reset');
+        const modalStats = document.getElementById('modal-stats');
+
+        document.getElementById('btn-info').addEventListener('click', () => {
+            initAudio(); // Warm audio context directly on user interaction
+            modalInfo.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-settings').addEventListener('click', () => {
+            modalReset.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-stats').addEventListener('click', () => {
+            buildHistoryLog();
+            modalStats.classList.remove('hidden');
+        });
+
+        document.querySelectorAll('.close-modal').forEach(el => {
+            el.addEventListener('click', () => {
+                modalInfo.classList.add('hidden');
+                modalStats.classList.add('hidden');
+            });
+        });
+
+        document.getElementById('btn-cancel-reset').addEventListener('click', () => {
+            modalReset.classList.add('hidden');
+        });
+
+        document.getElementById('btn-confirm-reset').addEventListener('click', () => {
+            state.productiveSeconds = 0;
+            state.relaxBalanceSeconds = 0;
+            state.relaxSecondsSpent = 0;
+            state.activeMode = 'IDLE';
+            saveStateToLocal();
+            updateUI();
+            modalReset.classList.add('hidden');
+            playSound('pause');
+            showNotification("Your Dopamine balance has been completely reset.", "info");
+        });
+
+        // Global dismiss for overlays on backdrop tap
+        [modalInfo, modalReset, modalStats].forEach(m => {
+            m.addEventListener('click', (e) => {
+                if (e.target === m) {
+                    m.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
